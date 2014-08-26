@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+	<style>
+	dl{
+		border-bottom: 1px solid black;
+	}
+	#page a{
+		display: block;
+		float: left;
+		width: 20px;
+		background: gold;
+		text-align: center;
+		padding: 5px;
+		margin: 5px;
+		cursor: pointer;
+	}
+	</style>
+
+	<script>
+
+	function douban(data){
+		var oQ = document.getElementById('q');
+		var msg = document.getElementById('msg');
+		var list = document.getElementById('list');
+
+		msg.innerHTML= data.total;
+
+		var html ='';
+
+		for(var i=0;i<data.books.length;i++){
+			html += '<dl><dt>'+data.books[i].title+'</dt><dd><img src='+data.books[i].image+'></dd></dl>';
+		}
+
+		list.innerHTML=html;
+
+		var page =document.getElementById('page');
+
+		console.log(typeof page.childNodes.length);
+		if(page.childNodes.length==1){
+			for(var i=0;i<Math.ceil(data.total/data.count);i++){
+				var pageDiv = document.createElement('a');
+				pageDiv.index = i;
+				pageDiv.innerHTML = i+1;
+				// pageDiv.href= 'https://api.douban.com/v2/book/search?q='+oQ.value+'&callback=douban&count=10&start='+10*i;
+				page.appendChild(pageDiv);
+			}
+
+			document.body.appendChild(page);			
+		}
+
+
+		page.addEventListener('click',function(ev){
+			if(oQ.value!=''){
+				var oSricpt = document.createElement('script');
+				oSricpt.src = 'https://api.douban.com/v2/book/search?q='+oQ.value+'&callback=douban&count=10&start='+10*ev.target.index;
+				document.body.appendChild(oSricpt);
+			}			
+		},false);
+
+	}
+	window.onload = function(){
+		var oQ = document.getElementById('q');
+		var obtn = document.getElementById('btn');
+		var msg = document.getElementById('msg');
+		var list = document.getElementById('list');
+
+		obtn.onclick = function(){
+			if(oQ.value!=''){
+				var oSricpt = document.createElement('script');
+				oSricpt.src = 'https://api.douban.com/v2/book/search?q='+oQ.value+'&callback=douban&count=10';
+				document.body.appendChild(oSricpt);
+			}
+
+		}
+
+
+	}
+	</script>
+</head>
+<body>
+	<input type="text" id='q'>
+
+	<input type="button" value="搜索" id="btn">
+	
+	<p id="msg"></p>
+
+	<div id="list">
+		
+	</div>
+	<div id="page">
+		
+	</div>
+</body>
+</html>
